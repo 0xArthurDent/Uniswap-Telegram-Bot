@@ -1,6 +1,7 @@
 import logging
 import time
 import bin.settings as settings
+from bin.formataddress import formataddress
 from bin.formatnumber import formatnumber
 from bin.wallettostring import wallettostring
 from api.etherscan.uniswaptransactionbatch import UniswapTransactionBatch
@@ -41,30 +42,73 @@ class UniswapProcessor():
             # gathered earlier
             if ut.action == "Sold" or ut.action == "Bought":
                 if ut.action == "Bought":
-                    actionicon = "\U0001f7e2"
+                    if ut.usdpricetotal > 0 and ut.usdpricetotal <=100:
+                        actionicon = "\U0001f7e2"
+                    if ut.usdpricetotal > 100 and ut.usdpricetotal <=500:
+                        actionicon = "\U0001f7e2"*2
+                    if ut.usdpricetotal > 500 and ut.usdpricetotal <=1000:
+                        actionicon = "\U0001f7e2"*3
+                    if ut.usdpricetotal > 1000 and ut.usdpricetotal <=5000:
+                        actionicon = "\U0001f7e2"*4
+                    if ut.usdpricetotal > 5000 and ut.usdpricetotal <=10000:
+                        actionicon = "\U0001f7e2"*5
+                    if ut.usdpricetotal > 10000 and ut.usdpricetotal <=20000:
+                        actionicon = "\U0001f7e2"*6
+                    if ut.usdpricetotal > 20000 and ut.usdpricetotal <=50000:
+                        actionicon = "\U0001f7e2"*7
+                    if ut.usdpricetotal > 50000:
+                        actionicon = "\U0001f7e2"*8
                 if ut.action == "Sold":
-                    actionicon = "\U0001f534"
+                    if ut.usdpricetotal > 0 and ut.usdpricetotal <=100:
+                        actionicon = "\U0001f534"
+                    if ut.usdpricetotal > 100 and ut.usdpricetotal <=500:
+                        actionicon = "\U0001f534"*2
+                    if ut.usdpricetotal > 500 and ut.usdpricetotal <=1000:
+                        actionicon = "\U0001f534"*3
+                    if ut.usdpricetotal > 1000 and ut.usdpricetotal <=5000:
+                        actionicon = "\U0001f534"*4
+                    if ut.usdpricetotal > 5000 and ut.usdpricetotal <=10000:
+                        actionicon = "\U0001f534"*5
+                    if ut.usdpricetotal > 10000 and ut.usdpricetotal <=20000:
+                        actionicon = "\U0001f534"*6
+                    if ut.usdpricetotal > 20000 and ut.usdpricetotal <=50000:
+                        actionicon = "\U0001f534"*7
+                    if ut.usdpricetotal > 50000:
+                        actionicon = "\U0001f534"*8
+                if ut.primarytokenamount > 0:
+                    if ut.primarytokenamount > 0 and ut.primarytokenamount <=1000:
+                        sizeicon = "\U0001f990" #shrimp
+                    if ut.primarytokenamount > 1000 and ut.primarytokenamount <=3000:
+                        sizeicon = "\U0001f980" #crab
+                    if ut.primarytokenamount > 3000 and ut.primarytokenamount <=6000:
+                        sizeicon = "\U0001f41f" #fish
+                    if ut.primarytokenamount > 6000 and ut.primarytokenamount <=10000:
+                        sizeicon = "\U0001f419" #octopus
+                    if ut.primarytokenamount > 10000 and ut.primarytokenamount <=20000:
+                        sizeicon = "\U0001f42c" #dolphin
+                    if ut.primarytokenamount > 20000 and ut.primarytokenamount <=50000:
+                        sizeicon = "\U0001f988" #shark
+                    if ut.primarytokenamount > 50000 and ut.primarytokenamount <=200000:
+                        sizeicon = "\U0001f40b" #whale
+                    if ut.primarytokenamount > 200000:
+                        sizeicon = "\U0001f433" #blue whale
+                walletstring = wallettostring(ut.wallet)
+                shortwallet = formataddress(walletstring)
+                exchange = "Uniswap \U0001f984" #uniswap
                 msg = (
-                "<b>{primarytokenname} {action} {actionicon}</b>\n"
-                "Block: {blocknumber}\n\n"
+                "<b>Last Price: ${usdpricepertoken} / {pairtokenpricept} {pairtokenname}</b>\n\n"
+                "{actionicon}\n\n"
+                "<a href=\"https://etherscan.io/address/{wallet}\">{shortwallet}</a> "
+                "<b><a href=\"https://etherscan.io/tx/{txhash}\">{action}</a></b> "
                 "<b>{primarytokenamount} {primarytokensymbol}</b> "
-                "{laction} for <b>{pairtokenamount} {pairtokenname}</b>\n"
-                "<b>{primarytokensymbol} Value:</b> "
-                "{eurpricetotal} EUR / {usdpricetotal} USD\n"
-                "<i>(Price per {primarytokensymbol}: "
-                "{eurpricepertoken} EUR / "
-                "{usdpricepertoken} USD / "
-                "{pairtokenpricept} {pairtokenname})</i>\n\n"
-                "1 {pairtokenname} = {pairtokeneurprice} EUR / "
-                "{pairtokenusdprice} USD \n\n"
-                "<b>TX here:</b> "
-                "<a href=\"https://etherscan.io/tx/{txhash}\">link</a>\n"
-                "<b>Wallet:</b> "
-                "<a href=\"https://etherscan.io/address/{wallet}\">"
-                "{wallet}</a>\n"
-                "<b>Uniswap pair:</b> "
-                "<a href=\"https://v2.info.uniswap.org/pair/{uniswapaddress}\">"
-                "link</a>"
+                "for <b>{pairtokenamount} {pairtokenname}</b> "
+                "<i>(${usdpricetotal}</i> {sizeicon}) on "
+                "<b><a href=\"https://v2.info.uniswap.org/token/{primarytokencontractaddress}\"> {exchange}</a></b>\n\n"
+                "<b>Links:</b> "
+                "<a href=\"https://etherscan.io/tx/{txhash}\">Tx</a> | "
+                "<a href=\"https://v2.info.uniswap.org/pair/{uniswapaddress}\">Uni V2 LP</a> | "
+                "<a href=\"https://behodler.io/\">Trade</a>\n\n"
+                "Powered by <b><a href=\"https://behodler.io/\">Behodler Liquidity Protocol</a></b>"
                 ).format(
                     action = ut.action,
                     laction = ut.action.lower(),
@@ -84,15 +128,49 @@ class UniswapProcessor():
                     usdpricepertoken= formatnumber(ut.usdpricepertoken),
                     pairtokenpricept = formatnumber(ut.pairtokenpricept,8),
                     wallet = wallettostring(ut.wallet),
-                    uniswapaddress = settings.config.uniswapaddress
+                    uniswapaddress = settings.config.uniswapaddress,
+                    shortwallet = shortwallet,
+                    exchange = exchange,
+                    primarytokencontractaddress = settings.config.primarytokencontractaddress,
+                    sizeicon = sizeicon
                 )
             elif ut.action == 'Liquidity Added' or \
                 ut.action == 'Liquidity Removed':
 
                 if ut.action == 'Liquidity Added':
-                    actionicon = '\U0001f7e9'
+                    if ut.usdpricetotal > 0 and ut.usdpricetotal <=100:
+                        actionicon = "\U0001f4a7"
+                    if ut.usdpricetotal > 100 and ut.usdpricetotal <=500:
+                        actionicon = "\U0001f4a7"*2
+                    if ut.usdpricetotal > 500 and ut.usdpricetotal <=1000:
+                        actionicon = "\U0001f4a7"*3
+                    if ut.usdpricetotal > 1000 and ut.usdpricetotal <=5000:
+                        actionicon = "\U0001f4a7"*4
+                    if ut.usdpricetotal > 5000 and ut.usdpricetotal <=10000:
+                        actionicon = "\U0001f4a7"*5
+                    if ut.usdpricetotal > 10000 and ut.usdpricetotal <=20000:
+                        actionicon = "\U0001f4a7"*6
+                    if ut.usdpricetotal > 20000 and ut.usdpricetotal <=50000:
+                        actionicon = "\U0001f4a7"*7
+                    if ut.usdpricetotal > 50000:
+                        actionicon = "\U0001f4a7"*8
                 if ut.action == 'Liquidity Removed':
-                    actionicon = '\U0001f7e5'
+                    if ut.usdpricetotal > 0 and ut.usdpricetotal <=100:
+                        actionicon = "\U0001fa78"
+                    if ut.usdpricetotal > 100 and ut.usdpricetotal <=500:
+                        actionicon = "\U0001fa78"*2
+                    if ut.usdpricetotal > 500 and ut.usdpricetotal <=1000:
+                        actionicon = "\U0001fa78"*3
+                    if ut.usdpricetotal > 1000 and ut.usdpricetotal <=5000:
+                        actionicon = "\U0001fa78"*4
+                    if ut.usdpricetotal > 5000 and ut.usdpricetotal <=10000:
+                        actionicon = "\U0001fa78"*5
+                    if ut.usdpricetotal > 10000 and ut.usdpricetotal <=20000:
+                        actionicon = "\U0001fa78"*6
+                    if ut.usdpricetotal > 20000 and ut.usdpricetotal <=50000:
+                        actionicon = "\U0001fa78"*7
+                    if ut.usdpricetotal > 50000:
+                        actionicon = "\U0001fa78"*8
 
                 pairtokenatuniswap = gettokenamount(
                     settings.config.uniswapaddress,
@@ -102,23 +180,26 @@ class UniswapProcessor():
                     settings.config.uniswapaddress,
                     settings.config.primarytokencontractaddress
                 )
+                walletstring = wallettostring(ut.wallet)
+                shortwallet = formataddress(walletstring)
+                exchange = "Uniswap \U0001f984" #uniswap
                 msg = (
-                "<b>{action}</b> {actionicon}\n"
-                "Block: {blocknumber}\n\n"
-                "<b>{pairtokenamount} {pairtokenname}</b> and "
-                "<b>{primarytokenamount} {primarytokensymbol}</b>\n"
-                "<b>Combined value:</b> {eurpricetotal} EUR / "
-                "{usdpricetotal} USD\n\n"
-                "<b>TX here:</b> "
-                "<a href=\"https://etherscan.io/tx/{txhash}\">link</a>\n"
-                "<b>Wallet:</b> "
-                "<a href=\"https://etherscan.io/address/{wallet}\">{wallet}</a>\n"
-                "<b>Uniswap pair:</b> "
-                "<a href=\"https://v2.info.uniswap.org/pair/{uniswapaddress}\">"
-                "link</a>"
-                "\n\n<b>New pooled token amounts:</b>\n"
+                 "<b>Last Price: ${usdpricepertoken} / {pairtokenpricept} {pairtokenname}</b>\n\n"
+                "{actionicon}\n\n"
+                "<a href=\"https://etherscan.io/address/{wallet}\">{shortwallet}</a> "
+                "<b><a href=\"https://etherscan.io/tx/{txhash}\">{action}</a></b> "
+                "<b>{primarytokenamount} {primarytokensymbol}</b> "
+                "and <b>{pairtokenamount} {pairtokenname}</b> "
+                "<i>(${usdpricetotal}</i> ) on "
+                "<b><a href=\"https://v2.info.uniswap.org/token/{primarytokencontractaddress}\"> {exchange}</a></b>\n\n"
+                "<b>{exchange} LP amounts:</b>\n"
                 "Pooled {pairtokenname}: {pairtokenatuniswap}\n"
                 "Pooled {primarytokensymbol}: {primarytokenatuniswap}"
+                "\n\n<b>Links:</b> "
+                "<a href=\"https://etherscan.io/tx/{txhash}\">Tx</a> | "
+                "<a href=\"https://v2.info.uniswap.org/pair/{uniswapaddress}\">Uni V2 LP</a> | "
+                "<a href=\"https://behodler.io/\">Trade</a>\n\n"
+                "Powered by <b><a href=\"https://behodler.io/\">Behodler Liquidity Protocol</a></b>"
                 ).format(
                     action = ut.action,
                     actionicon = actionicon,
@@ -133,7 +214,13 @@ class UniswapProcessor():
                     wallet = wallettostring(ut.wallet),
                     pairtokenatuniswap = formatnumber(pairtokenatuniswap),
                     primarytokenatuniswap = formatnumber(primarytokenatuniswap),
-                    uniswapaddress = settings.config.uniswapaddress
+                    uniswapaddress = settings.config.uniswapaddress,
+                    shortwallet = shortwallet,
+                    exchange = exchange,
+                    primarytokencontractaddress = settings.config.primarytokencontractaddress,
+                    eurpricepertoken= formatnumber(ut.eurpricepertoken),
+                    usdpricepertoken= formatnumber(ut.usdpricepertoken),
+                    pairtokenpricept = formatnumber(ut.pairtokenpricept,8)
                 )
 
             for channel in settings.config.telegramactivatedchannels:

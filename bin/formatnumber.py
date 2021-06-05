@@ -14,15 +14,15 @@ def formatnumber(number,ndigits=2):
         output = numberparts[0][:offset]
 
     for r in range(blocks):
-        output += ' '
+        output += ','
         output += numberparts[0][offset:offset + 3]
         offset += 3
 
     # If numbers has decimals
     if len(numberparts) == 2:
-        output = output + "," + numberparts[1]
+        output = output + "." + numberparts[1]
 
     return output
 
 
-print(formatnumber(1933.213))
+print(formatnumber(1935646653.213))
