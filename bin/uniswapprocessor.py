@@ -4,6 +4,7 @@ import bin.settings as settings
 from bin.formataddress import formataddress
 from bin.formatnumber import formatnumber
 from bin.wallettostring import wallettostring
+from bin.usdtradesize import usdtradesize
 from api.etherscan.uniswaptransactionbatch import UniswapTransactionBatch
 from api.etherscan.uniswaptransaction import UniswapTransaction
 from api.etherscan.gettokenamount import gettokenamount
@@ -41,40 +42,10 @@ class UniswapProcessor():
             # Send message to active Telegram channels with the information
             # gathered earlier
             if ut.action == "Sold" or ut.action == "Bought":
-                if ut.action == "Bought":
-                    if ut.usdpricetotal > 0 and ut.usdpricetotal <=100:
-                        actionicon = "\U0001f7e2"
-                    if ut.usdpricetotal > 100 and ut.usdpricetotal <=500:
-                        actionicon = "\U0001f7e2"*2
-                    if ut.usdpricetotal > 500 and ut.usdpricetotal <=1000:
-                        actionicon = "\U0001f7e2"*3
-                    if ut.usdpricetotal > 1000 and ut.usdpricetotal <=5000:
-                        actionicon = "\U0001f7e2"*4
-                    if ut.usdpricetotal > 5000 and ut.usdpricetotal <=10000:
-                        actionicon = "\U0001f7e2"*5
-                    if ut.usdpricetotal > 10000 and ut.usdpricetotal <=20000:
-                        actionicon = "\U0001f7e2"*6
-                    if ut.usdpricetotal > 20000 and ut.usdpricetotal <=50000:
-                        actionicon = "\U0001f7e2"*7
-                    if ut.usdpricetotal > 50000:
-                        actionicon = "\U0001f7e2"*8
-                if ut.action == "Sold":
-                    if ut.usdpricetotal > 0 and ut.usdpricetotal <=100:
-                        actionicon = "\U0001f534"
-                    if ut.usdpricetotal > 100 and ut.usdpricetotal <=500:
-                        actionicon = "\U0001f534"*2
-                    if ut.usdpricetotal > 500 and ut.usdpricetotal <=1000:
-                        actionicon = "\U0001f534"*3
-                    if ut.usdpricetotal > 1000 and ut.usdpricetotal <=5000:
-                        actionicon = "\U0001f534"*4
-                    if ut.usdpricetotal > 5000 and ut.usdpricetotal <=10000:
-                        actionicon = "\U0001f534"*5
-                    if ut.usdpricetotal > 10000 and ut.usdpricetotal <=20000:
-                        actionicon = "\U0001f534"*6
-                    if ut.usdpricetotal > 20000 and ut.usdpricetotal <=50000:
-                        actionicon = "\U0001f534"*7
-                    if ut.usdpricetotal > 50000:
-                        actionicon = "\U0001f534"*8
+                if ut.action == "Bought" and ut.usdpricetotal > 0:
+                    actionicon = "\U0001f7e2"*(usdtradesize(ut.usdpricetotal))
+                if ut.action == "Sold" and ut.usdpricetotal > 0:
+                    actionicon = "\U0001f534"*(usdtradesize(ut.usdpricetotal))
                 if ut.primarytokenamount > 0:
                     if ut.primarytokenamount > 0 and ut.primarytokenamount <=1000:
                         sizeicon = "\U0001f990" #shrimp
@@ -137,40 +108,10 @@ class UniswapProcessor():
             elif ut.action == 'Liquidity Added' or \
                 ut.action == 'Liquidity Removed':
 
-                if ut.action == 'Liquidity Added':
-                    if ut.usdpricetotal > 0 and ut.usdpricetotal <=100:
-                        actionicon = "\U0001f4a7"
-                    if ut.usdpricetotal > 100 and ut.usdpricetotal <=500:
-                        actionicon = "\U0001f4a7"*2
-                    if ut.usdpricetotal > 500 and ut.usdpricetotal <=1000:
-                        actionicon = "\U0001f4a7"*3
-                    if ut.usdpricetotal > 1000 and ut.usdpricetotal <=5000:
-                        actionicon = "\U0001f4a7"*4
-                    if ut.usdpricetotal > 5000 and ut.usdpricetotal <=10000:
-                        actionicon = "\U0001f4a7"*5
-                    if ut.usdpricetotal > 10000 and ut.usdpricetotal <=20000:
-                        actionicon = "\U0001f4a7"*6
-                    if ut.usdpricetotal > 20000 and ut.usdpricetotal <=50000:
-                        actionicon = "\U0001f4a7"*7
-                    if ut.usdpricetotal > 50000:
-                        actionicon = "\U0001f4a7"*8
-                if ut.action == 'Liquidity Removed':
-                    if ut.usdpricetotal > 0 and ut.usdpricetotal <=100:
-                        actionicon = "\U0001fa78"
-                    if ut.usdpricetotal > 100 and ut.usdpricetotal <=500:
-                        actionicon = "\U0001fa78"*2
-                    if ut.usdpricetotal > 500 and ut.usdpricetotal <=1000:
-                        actionicon = "\U0001fa78"*3
-                    if ut.usdpricetotal > 1000 and ut.usdpricetotal <=5000:
-                        actionicon = "\U0001fa78"*4
-                    if ut.usdpricetotal > 5000 and ut.usdpricetotal <=10000:
-                        actionicon = "\U0001fa78"*5
-                    if ut.usdpricetotal > 10000 and ut.usdpricetotal <=20000:
-                        actionicon = "\U0001fa78"*6
-                    if ut.usdpricetotal > 20000 and ut.usdpricetotal <=50000:
-                        actionicon = "\U0001fa78"*7
-                    if ut.usdpricetotal > 50000:
-                        actionicon = "\U0001fa78"*8
+                if ut.action == 'Liquidity Added' and ut.usdpricetotal > 0:
+                    actionicon = "\U0001f4a7"*(usdtradesize(ut.usdpricetotal))
+                if ut.action == 'Liquidity Removed' and ut.usdpricetotal > 0:
+                    actionicon = "\U0001fa78"*(usdtradesize(ut.usdpricetotal))
 
                 pairtokenatuniswap = gettokenamount(
                     settings.config.uniswapaddress,
